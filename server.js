@@ -1,4 +1,3 @@
-const uuid = require("uuid");
 const fs = require("fs");
 const grpc = require("@grpc/grpc-js");
 const protoLoader = require("@grpc/proto-loader");
@@ -13,12 +12,15 @@ const packageDefinition = protoLoader.loadSync("./upload.proto", {
 
 const uploadProto = grpc.loadPackageDefinition(packageDefinition).UploadPackage;
 
+
 const uploadFile = (req, callback) => {
-    let chunk, fileName;
+    let fileName, text;
+
     req.on('data', async (payload) => {
         fileName = payload.name
-        chunk = payload.chunk
-        fs.appendFileSync(`./backup/${fileName}`, chunk);
+        text = new TextDecoder().decode(payload.arBits);
+        text = `${new Date()} ${text} \n`
+        fs.appendFileSync(`./backup/${fileName}`, text);
     });
 
     req.on('end', async () => {
@@ -26,14 +28,12 @@ const uploadFile = (req, callback) => {
     });
 };
 
-
 const server = new grpc.Server();        
 server.addService(uploadProto.UploadService.service, {
     uploadFile: uploadFile
 });
 
-
-const address = `0.0.0.0:8000`;
+const address = '0.0.0.0:8000';
 server.bindAsync(address, grpc.ServerCredentials.createInsecure(), (error, _) => {
     if(!error) {
         server.start();

@@ -5,7 +5,7 @@ package UploadPackage;
 message UploadRequest {
     oneof data {
         string name = 1;
-        bytes chunk = 2;
+        bytes arBits = 2;
     }
 }
 

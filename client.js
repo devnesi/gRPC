@@ -23,12 +23,12 @@ const serviceUp = service.uploadFile((error, response) => {
 });
 
 
-let fileName = 'index.html'
+let fileName = 'text.txt'
 const readStream = fs.createReadStream(fileName);
-readStream.on('data', (chunk) => {
+readStream.on('data', (arBits) => {
     serviceUp.write({
         name: fileName,
-        chunk: Uint8Array.from(chunk)
+        arBits: Uint8Array.from(arBits)
     });
 });
 
