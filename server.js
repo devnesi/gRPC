@@ -14,13 +14,11 @@ const uploadProto = grpc.loadPackageDefinition(packageDefinition).UploadPackage;
 
 
 const uploadFile = (req, callback) => {
-    let fileName, text;
+    let fileName;
 
-    req.on('data', async (payload) => {
+    req.on('data', async (payload) => {        
         fileName = payload.name
-        text = new TextDecoder().decode(payload.arBits);
-        text = `${new Date()} ${text} \n`
-        fs.appendFileSync(`./backup/${fileName}`, text);
+        fs.appendFileSync(`./backup/${fileName}`, payload.arBits);
     });
 
     req.on('end', async () => {
